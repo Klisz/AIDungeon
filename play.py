@@ -101,6 +101,7 @@ def instructions():
     text += '\n  "/infto"    Sets the timeout.'
     text += '\n  "/censor off/on" to turn censoring off or on.'
     text += '\n  "/retry"    Reverts the last action and then tries it again.'
+    text += '\n  "/setchar"  Switches control to a different character.'
     text += "\nIn addition, prefixing your command with a ! will inject it directly into"
     text += "\n the story,rather than prefixing it with 'You '."
     return text
@@ -133,6 +134,9 @@ def play_aidungeon_2():
     while True:
         if story_manager.story != None:
             del story_manager.story
+            
+        characters = ["You"]
+        current_character = "You"
 
         while story_manager.story is None: 
             print("\n\n")
@@ -271,6 +275,23 @@ def play_aidungeon_2():
 
                      continue
 
+                elif command == "setchar":
+                    new_char = action[len(action.split(" ")[0]):].strip()
+                    if new_char == "":
+                        console_print("Character name cannot be empty")
+                        continue
+                    is_known_char = False
+                    for known_char in characters:
+                        if known_char.lower() == new_char.lower():
+                            is_known_char = True
+                            new_char = known_char
+                            break
+                    if not is_known_char:
+                        characters.append(new_char)
+
+                    current_character = new_char
+                    console_print("Switched to character "   new_char)
+                    continue
                 else:
                     console_print(f"Unknown command: {command}")
 
@@ -285,7 +306,10 @@ def play_aidungeon_2():
                     console_print(result)
 
                 elif action[0] == '"':
-                    action = "You say " + action
+                    if current_character == "You":
+                        action = "You say " + action
+                    else:
+                        action = current_character + " says " + action
                     
                 elif action[0] == '!':
                     action = "\n" + action[1:].replace("\\n", "\n") + "\n"
@@ -295,12 +319,12 @@ def play_aidungeon_2():
                     action = action[0].lower() + action[1:]
 
                     if "You" not in action[:6] and "I" not in action[:6]:
-                        action = "You " + action
+                        action = current_character + " " + action
 
                     if action[-1] not in [".", "?", "!"]:
                         action = action + "."
-
-                    action = first_to_second_person(action)
+                    if current_character == "You":
+                        action = first_to_second_person(action)
 
                     action = "\n> " + action + "\n"
 
