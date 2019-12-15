@@ -7,6 +7,7 @@ from generator.gpt2.gpt2_generator import *
 from story import grammars
 from story.story_manager import *
 from story.utils import *
+from func_timeout import func_timeout, FunctionTimedOut
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
@@ -97,6 +98,7 @@ def instructions():
     text += '\n  "/load"     Asks for a save ID and loads the game if the ID is valid'
     text += '\n  "/print"    Prints a transcript of your adventure (without extra newline formatting)'
     text += '\n  "/help"     Prints these instructions again'
+    text += '\n  "/infto"    Sets the timeout.'
     text += '\n  "/censor off/on" to turn censoring off or on.'
     return text
 
@@ -114,6 +116,11 @@ def play_aidungeon_2():
     print("\nInitializing AI Dungeon! (This might take a few minutes)\n")
     generator = GPT2Generator()
     story_manager = UnconstrainedStoryManager(generator)
+    inference_timeout = 30
+    def act(action):
+        return func_timeout(inference_timeout, story_manager.act, (action,))
+    def notify_hanged():
+        console_print(f\"That input caused the model to hang (timeout is {inference_timeout}, use /infto ## command to change)\")
     print("\n")
 
     with open("opening.txt", "r", encoding="utf-8") as file:
@@ -225,6 +232,13 @@ def play_aidungeon_2():
                     else:
                         console_print(story_manager.story.story_start)
                     continue
+                elif command == "infto":
+                    try:
+                        inference_timeout = int(args[0])
+                        console_print(f\"Set timeout to {inference_timeout}\")
+                    except:
+                        console_print(\"Failed to set timeout. Example usage: infto 30\")
+                    continue
 
                 else:
                     console_print(f"Unknown command: {command}")
@@ -232,7 +246,11 @@ def play_aidungeon_2():
             else:
                 if action == "":
                     action = ""
-                    result = story_manager.act(action)
+                    try:
+                        result = act(action)
+                    except FunctionTimedOut:
+                        notify_hanged()
+                        continue
                     console_print(result)
 
                 elif action[0] == '"':
@@ -252,7 +270,12 @@ def play_aidungeon_2():
 
                     action = "\n> " + action + "\n"
 
-                result = "\n" + story_manager.act(action)
+                try:
+                    result = "\n" + act(action)
+                except FunctionTimedOut:
+                    notify_hanged()
+                    continue
+                                      
                 if len(story_manager.story.results) >= 2:
                     similarity = get_similarity(
                         story_manager.story.results[-1], story_manager.story.results[-2]
