@@ -39,7 +39,24 @@ def select_game():
 
     if choice == len(settings):
 
-        context = ""
+        contextchoice = input("Do you want to make a custom context that the game will always remember (with your name, class and inventory?) (y/n): ");
+        if contextchoice.lower() == "y" or contextchoice.lower() == "yes":
+            name = input("\nWhat is your name? ")
+            character_key = input("\nWho are you? ")
+            custominventory = input("\nWhat do you have? ")
+            context = (
+                "You are "
+                + name
+                + ", a "
+                + character_key
+                + " "
+                + "You have "
+                + custominventory
+                + ". "
+            )
+
+        elif contextchoice.lower() == "n" or contextchoice.lower() == "no":
+            context = ""
         console_print(
             "\nEnter a prompt that describes who you are and the first couple sentences of where you start "
             "out ex:\n 'You are a knight in the kingdom of Larion. You are hunting the evil dragon who has been "
