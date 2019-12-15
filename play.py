@@ -290,7 +290,7 @@ def play_aidungeon_2():
                         characters.append(new_char)
 
                     current_character = new_char
-                    console_print("Switched to character "   new_char)
+                    console_print("Switched to character " + new_char)
                     continue
                 else:
                     console_print(f"Unknown command: {command}")
