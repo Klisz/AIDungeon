@@ -154,7 +154,10 @@ class StoryManager:
     def start_new_story(
         self, story_prompt, context="", game_state=None, upload_story=False
     ):
-        block = self.generator.generate(context + story_prompt)
+        if story_prompt.strip()[-1] in [".","!","?"]:
+            block = ""
+        else:
+             block = self.generator.generate(context + story_prompt)
         block = cut_trailing_sentence(block)
         self.story = Story(
             context + story_prompt + block,
