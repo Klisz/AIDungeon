@@ -100,6 +100,8 @@ def instructions():
     text += '\n  "/help"     Prints these instructions again'
     text += '\n  "/infto"    Sets the timeout.'
     text += '\n  "/censor off/on" to turn censoring off or on.'
+    text += "\nIn addition, prefixing your command with a ! will inject it directly into the story,"
+    text += "\nrather than prefixing it with 'You '."
     return text
 
 
@@ -255,6 +257,9 @@ def play_aidungeon_2():
 
                 elif action[0] == '"':
                     action = "You say " + action
+                    
+                elif action[0] == '!':
+                    action = "\n" + action[1:].replace("\\n", "\n") + "\n"
 
                 else:
                     action = action.strip()
