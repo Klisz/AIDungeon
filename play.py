@@ -152,7 +152,7 @@ def play_aidungeon_2():
 
     while True:
         if story_manager.story != None:
-            del story_manager.story
+            story_manager.story = None
             
         characters = ["You"]
         current_character = "You"
