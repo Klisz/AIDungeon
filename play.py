@@ -100,8 +100,8 @@ def instructions():
     text += '\n  "/help"     Prints these instructions again'
     text += '\n  "/infto"    Sets the timeout.'
     text += '\n  "/censor off/on" to turn censoring off or on.'
-    text += "\nIn addition, prefixing your command with a ! will inject it directly into the story,"
-    text += "\nrather than prefixing it with 'You '."
+    text += "\nIn addition, prefixing your command with a ! will inject it directly into"
+    text += "\n the story,rather than prefixing it with 'You '."
     return text
 
 
