@@ -100,6 +100,7 @@ def instructions():
     text += '\n  "/help"     Prints these instructions again'
     text += '\n  "/infto"    Sets the timeout.'
     text += '\n  "/censor off/on" to turn censoring off or on.'
+    text += '\n  "/retry"    Reverts the last action and then tries it again.'
     text += "\nIn addition, prefixing your command with a ! will inject it directly into"
     text += "\n the story,rather than prefixing it with 'You '."
     return text
@@ -241,6 +242,34 @@ def play_aidungeon_2():
                     except:
                         console_print("Failed to set timeout. Example usage: infto 30")
                     continue
+                elif command == "retry":
+                     if len(story_manager.story.actions) is 0:
+                         console_print("There is nothing to retry.")
+                         continue
+
+                     last_action = story_manager.story.actions.pop()
+                     last_result = story_manager.story.results.pop()
+
+                     try:
+                         # Compatibility with timeout patch
+                         act
+                     except NameError:
+                         act = story_manager.act
+
+                     try:
+                         try:
+                             act(last_action)
+                             console_print(last_action)
+                             console_print(story_manager.story.results[-1])
+                         except FunctionTimedOut:
+                             story_manager.story.actions.append(last_action)
+                             story_manager.story.results.append(last_result)
+                             notify_hanged()
+                             console_print("Your story progress has not been altered.")
+                     except NameError:
+                         pass
+
+                     continue
 
                 else:
                     console_print(f"Unknown command: {command}")
