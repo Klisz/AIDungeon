@@ -41,21 +41,8 @@ def select_game():
 
         contextchoice = input("Do you want to make a custom context that the game will always remember (with your name, class and inventory?) (y/n): ");
         if contextchoice.lower() == "y" or contextchoice.lower() == "yes":
-            name = input("\nWhat is your name? ")
-            character_key = input("\nWhat is your class? ")
-            location_key = input("\nWhere do you live? ")
-            custominventory = input("\nWhat do you have? ")
-            context = (
-                "You are "
-                + name
-                + ", a "
-                + character_key
-                + " living in "
-                + location_key
-                + ". You have "
-                + custominventory
-                + ". "
-            )
+            console_print("\nIn the default starts, context is the 'You are [name], a [class] living in [place]. You have [inventory].'")
+            context = input("Custom Context: ")
 
         elif contextchoice.lower() == "n" or contextchoice.lower() == "no":
             context = ""
